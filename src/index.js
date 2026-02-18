@@ -1,9 +1,10 @@
 const express = require("express");
-const { connectToDB } = require("./db"); // Import the database connection
-const { User } = require("./db/models/user.model");
+const { connectToDB, sequelize } = require("./db"); // Import the database connection
+const { User, Post, Comment } = require("./db/models/");
+
 const app = express();
 connectToDB(); // Connect to the database
-User.sync();
+sequelize.sync();
 app.use(express.json());
 const port = 3000;
 
