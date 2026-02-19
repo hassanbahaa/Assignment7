@@ -24,7 +24,7 @@ Post.init(
     },
   },
   {
-    // Other model options go here
+    paranoid: true,
     sequelize, // We need to pass the connection instance
     modelName: "Post", // We need to choose the model name
   }
