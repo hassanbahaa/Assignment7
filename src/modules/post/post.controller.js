@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { Post } = require("../../db/models");
-const { createPost } = require("./post.service");
+const { createPost, deletePost } = require("./post.service");
 
 router.post("/", async (req, res) => {
   const post = req.body;
@@ -18,5 +18,25 @@ router.post("/", async (req, res) => {
       .json({ message: error.message, success: false });
   }
 });
+
+// TODO : delete post by id
+router.delete("/:id", async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.get("userId");
+
+  try {
+      console.log("the sended data", userId);
+    const result = await deletePost(postId, userId);
+    res.status(200).json({
+      message: "Post deleted successfully",
+      success: true,
+      data: { postId },
+    });
+  } catch (error) {
+    res
+      .status(error.cause || 500)
+      .json({ message: error.message, success: false });
+  }
+})
 
 module.exports = { postRouter: router };
