@@ -36,5 +36,6 @@ async function checkPostExist(filter) {
 
 module.exports = {
   createPost,
-  deletePost
+  deletePost,
+  checkPostExist
 };
