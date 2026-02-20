@@ -3,6 +3,7 @@ const { connectToDB, sequelize } = require("./db"); // Import the database conne
 const { User, Post, Comment } = require("./db/models/");
 const { userRouter } = require("./modules/user/user.controller");
 const { postRouter } = require("./modules/post/post.controller");
+const { commentRouter } = require("./modules/comment/comment.controller");
 
 const app = express();
 connectToDB(); // Connect to the database
@@ -12,6 +13,7 @@ const port = 3000;
 
 app.use("/user", userRouter);
 app.use("/post", postRouter);
+app.use("/comments", commentRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
