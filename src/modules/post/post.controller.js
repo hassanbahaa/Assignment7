@@ -1,11 +1,10 @@
 const router = require("express").Router();
-const { Post } = require("../../db/models");
 const {
   createPost,
   deletePost,
   getAllPosts,
   getPostsWithCount,
-} = require("./post.service");
+} = require("../../modules");
 
 router.post("/", async (req, res) => {
   const post = req.body;

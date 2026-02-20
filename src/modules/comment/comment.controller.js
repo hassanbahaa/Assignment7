@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const { Comment } = require("../../db/models");
 const {
   createComments,
   updateComment,
@@ -7,7 +6,7 @@ const {
   commentSearch,
   newestComments,
   getCommentByPk,
-} = require("./comment.service");
+} = require("../../modules");
 
 router.post("/", async (req, res) => {
   const comments = req.body.comments;
