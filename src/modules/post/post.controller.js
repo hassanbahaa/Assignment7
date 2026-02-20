@@ -1,6 +1,11 @@
 const router = require("express").Router();
 const { Post } = require("../../db/models");
-const { createPost, deletePost } = require("./post.service");
+const {
+  createPost,
+  deletePost,
+  getAllPosts,
+  getPostsWithCount,
+} = require("./post.service");
 
 router.post("/", async (req, res) => {
   const post = req.body;
@@ -18,6 +23,36 @@ router.post("/", async (req, res) => {
       .json({ message: error.message, success: false });
   }
 });
+router.get("/details", async (req, res) => {
+  // get post with id and retrieve comments and authour details
+  try {
+    const posts = await getAllPosts();
+    res.status(200).json({
+      message: "Posts retrieved successfully",
+      success: true,
+      data: { posts },
+    });
+  } catch (error) {
+    res
+      .status(error.cause || 500)
+      .json({ message: error.message, success: false });
+  }
+});
+
+router.get("/comment-count", async (req, res) => {
+  try {
+    const posts = await getPostsWithCount();
+    res.status(200).json({
+      message: "Posts retrieved successfully",
+      success: true,
+      data: { posts },
+    });
+  } catch (error) {
+    res
+      .status(error.cause || 500)
+      .json({ message: error.message, success: false });
+  }
+});
 
 // TODO : delete post by id
 router.delete("/:id", async (req, res) => {
@@ -25,7 +60,7 @@ router.delete("/:id", async (req, res) => {
   const userId = req.get("userId");
 
   try {
-      console.log("the sended data", userId);
+    console.log("the sended data", userId);
     const result = await deletePost(postId, userId);
     res.status(200).json({
       message: "Post deleted successfully",
@@ -37,6 +72,6 @@ router.delete("/:id", async (req, res) => {
       .status(error.cause || 500)
       .json({ message: error.message, success: false });
   }
-})
+});
 
 module.exports = { postRouter: router };

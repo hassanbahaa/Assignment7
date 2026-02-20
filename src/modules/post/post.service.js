@@ -1,5 +1,6 @@
-const sequelize = require("../../db");
-const { Post } = require("../../db/models");
+const { Sequelize } = require("sequelize");
+
+const { Post, User, Comment } = require("../../db/models");
 const { checkUserExist } = require("../user/user.service");
 
 async function createPost(post) {
@@ -11,7 +12,7 @@ async function createPost(post) {
   return newPost;
 }
 
-async function deletePost(postId,userId) {
+async function deletePost(postId, userId) {
   if (!userId) throw new Error("User Id is required", { cause: 400 });
   // check if post exist
   const postExist = await checkPostExist({ id: postId });
@@ -19,12 +20,14 @@ async function deletePost(postId,userId) {
   // check for authorship
 
   const post = await Post.findOne({ where: { id: postId } });
-  console.log({postId: postId, userId: userId, post: post.userId});
-  if (post.userId != userId) throw new Error("you are not authorized to delete this post", { cause: 403 });
+  console.log({ postId: postId, userId: userId, post: post.userId });
+  if (post.userId != userId)
+    throw new Error("you are not authorized to delete this post", {
+      cause: 403,
+    });
 
   await Post.destroy({ where: { id: postId } });
   return true;
-  
 }
 
 async function checkPostExist(filter) {
@@ -33,9 +36,47 @@ async function checkPostExist(filter) {
   return true;
 }
 
+// get all posts
+async function getAllPosts() {
+  const posts = await Post.findAll({
+    attributes: ["id", "title"],
+    include: [
+      {
+        model: User,
+        attributes: ["name"],
+      },
+      {
+        model: Comment,
+        attributes: ["id", "content"],
+      },
+    ],
+  });
+  return posts;
+}
+
+//get posts with comments count
+async function getPostsWithCount() {
+  const posts = await Post.findAll({
+    attributes: [
+      "id",
+      "title",
+      [Sequelize.fn("COUNT", Sequelize.col("Comments.id")), "commentsCount"],
+    ],
+    include: [
+      {
+        model: Comment,
+        attributes: [],
+      },
+    ],
+    group: ["Post.id"],
+  });
+  return posts;
+}
 
 module.exports = {
   createPost,
   deletePost,
-  checkPostExist
+  checkPostExist,
+  getAllPosts,
+  getPostsWithCount,
 };
